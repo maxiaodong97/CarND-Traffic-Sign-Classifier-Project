@@ -21,7 +21,7 @@ This lab requires:
 
 The lab environment can be created with CarND Term1 Starter Kit. Click [here](https://github.com/udacity/CarND-Term1-Starter-Kit/blob/master/README.md) for the details.
 
-### Dataset and Repository
+### Dataset
 
 Download the data set from 
 1. [Training data set](http://benchmark.ini.rub.de/Dataset/GTSRB_Final_Training_Images.zip)
@@ -35,6 +35,23 @@ data/
     Final_Test/
     FInal_Training/
 ```
+
+### Dependency
+import os
+import pandas as pd
+import skimage.data
+import skimage.transform
+import matplotlib.pyplot as plt
+import plotly.offline as py
+import plotly.graph_objs as go
+from sklearn.model_selection import train_test_split
+from sklearn.utils import shuffle
+import tensorflow as tf
+import imgaug as ia
+from imgaug import augmenters as iaa
+
+
+### How to Run
 
 To run jupiter notebook:
 ```sh
