@@ -1,10 +1,4 @@
-#**Traffic Sign Recognition** 
-
-##Writeup Template
-
-###You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
-
----
+## Traffic Sign Recognition
 
 **Build a Traffic Sign Recognition Project**
 
@@ -17,47 +11,165 @@ The goals / steps of this project are the following:
 * Summarize the results with a written report
 
 
-[//]: # (Image References)
 
-[image1]: ./examples/visualization.jpg "Visualization"
-[image2]: ./examples/grayscale.jpg "Grayscaling"
-[image3]: ./examples/random_noise.jpg "Random Noise"
-[image4]: ./examples/placeholder.png "Traffic Sign 1"
-[image5]: ./examples/placeholder.png "Traffic Sign 2"
-[image6]: ./examples/placeholder.png "Traffic Sign 3"
-[image7]: ./examples/placeholder.png "Traffic Sign 4"
-[image8]: ./examples/placeholder.png "Traffic Sign 5"
+### Load the data set
 
-## Rubric Points
-###Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
+Download the data set from 
+1. [Training data set](http://benchmark.ini.rub.de/Dataset/GTSRB_Final_Training_Images.zip)
+2. [Test data set](http://benchmark.ini.rub.de/Dataset/GTSRB_Final_Test_Images.zip)
+3. [Test result](http://benchmark.ini.rub.de/Dataset/GTSRB_Final_Test_GT.zip)
 
----
-###Writeup / README
+And unzip to data folder, using following function to load the training data and test data.
 
-####1. Provide a Writeup / README that includes all the rubric points and how you addressed each one. You can submit your writeup as markdown or pdf. You can use this template as a guide for writing the report. The submission includes the project code.
+```python
 
-You're reading it! and here is a link to my [project code](https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project/blob/master/Traffic_Sign_Classifier.ipynb)
+TRAINING_IMAGE_DIR = 'data/Final_Training/Images'
+TEST_IMAGE_DIR = 'data/Final_Test/Images'
 
-###Data Set Summary & Exploration
+def load_train_data():
+    data_dir = TRAINING_IMAGE_DIR
+    directories = sorted([d for d in os.listdir(data_dir)
+                          if os.path.isdir(os.path.join(data_dir, d))])
+    labels = []
+    images = []
+    indexes = []
+    for d in directories:
+        label_dir = os.path.join(data_dir, d)
+        file_names = [os.path.join(label_dir, f)
+                      for f in os.listdir(label_dir) if f.endswith(".ppm")]
+        for f in file_names:
+            images.append(skimage.data.imread(f))
+            labels.append(int(d))
+        indexes.append(len(images))
+    return images, labels, indexes
 
-####1. Provide a basic summary of the data set. In the code, the analysis should be done using python, numpy and/or pandas methods rather than hardcoding results manually.
 
-I used the pandas library to calculate summary statistics of the traffic
-signs data set:
+def load_test_data():
+    csv_file = os.path.join(TEST_IMAGE_DIR, 'GT-final_test.csv')
+    csv = pd.read_csv(csv_file, sep=';')
+    labels = csv['ClassId'].values
+    files = csv['Filename'].values
+    images = []
+    for file in files:
+        f = os.path.join(TEST_IMAGE_DIR, file)
+        images.append(skimage.data.imread(f))
+    return images, labels
 
-* The size of training set is ?
-* The size of the validation set is ?
-* The size of test set is ?
-* The shape of a traffic sign image is ?
-* The number of unique classes/labels in the data set is ?
+X_raw, y_raw, indexes = load_train_data()
+classes = set(y_raw)
+N_CLASSES = len(classes)
+X_norm = [skimage.transform.resize(image, (32, 32), mode='constant') for image in X_raw]
+y_norm = y_raw
+X_train, X_validation, y_train, y_validation = train_test_split(
+    X_norm, y_norm, stratify=y_norm, test_size=9209, random_state=0)
+X_test, y_test = load_test_data()
 
-####2. Include an exploratory visualization of the dataset.
+n_train = len(X_train)
+n_validation = len(X_validation)
+n_test = len(X_test)
+image_shape = [32, 32, 3]
+n_classes = len(y_train)
+print("Number of training examples =", n_train)
+print("Number of validation examples =", 9209)
+print("Number of testing examples =", n_test)
+print("Image data shape =", image_shape)
+print("Number of classes =", n_classes)
+```
+Here is the output: 
+```python
+Number of training examples = 30000
+Number of validation examples = 9209
+Number of testing examples = 12630
+Image data shape = [32, 32, 3]
+Number of classes = 30000
+```
 
-Here is an exploratory visualization of the data set. It is a bar chart showing how the data ...
+Please note the initial X_raw data is sorted by class label, we use indexes to hold the "seperator". By doing this, we can easily find all images of a class, eg:
 
-![alt text][image1]
+```python
 
-###Design and Test a Model Architecture
+def getImageForClass(label):
+    if label == 0:
+        return X_raw[0: indexes[label]]
+    if label == N_CLASSES - 1:
+        return X_raw[indexes[label]:]
+    return X_raw[indexes[label - 1]: indexes[label]]
+
+```
+
+### Explore, summarize and visualize the data set
+
+Following function is used to plot the samples
+
+```python
+def plotImage(images):
+    plt.figure(figsize=(15, 15))
+    i = 1
+    for image in images:
+        plt.subplot(8, 8, i)  # A grid of 8 rows x 8 columns
+        plt.axis('off')
+        i += 1
+        plt.imshow(image)
+    plt.show()
+
+
+def plotSamplesSummary(images, labels, classes):
+    plt.figure(figsize=(15, 15))
+    i = 1
+    for label in classes:
+        # Pick the first image for each label.
+        image = images[labels.index(label)]
+        plt.subplot(8, 8, i)  # A grid of 8 rows x 8 columns
+        plt.axis('off')
+        plt.title("Label {0} ({1})".format(label, labels.count(label)))
+        i += 1
+        plt.imshow(image)
+    plt.show()
+
+
+def plotSamplesSome(images, labels, label, limit):
+    plt.figure(figsize=(15, 5))
+    i = 1
+    start = labels.index(label)
+    end = start + labels.count(label)
+    images = images[start:end][:limit]
+    for image in images:
+        plt.subplot(3, 8, i)
+        plt.axis('off')
+        plt.title("Label {0} ({1})".format(label, labels.count(label)))
+        i += 1
+        plt.imshow(image)
+    plt.show()
+
+
+def histogram(X, xDescription, yDescription, title):
+    data = [go.Histogram(x=X)]
+    layout = go.Layout(
+        title=title,
+        xaxis=dict(title=xDescription),
+        yaxis=dict(title=yDescription),
+        bargap=0.1,
+        bargroupgap=0.1
+    )
+    fig = go.Figure(data=data, layout=layout)
+    py.iplot(fig)
+```
+
+First draw one sample of each class.
+
+```python
+plotSamplesSummary(X_raw, y_raw, classes)
+```
+![alt text](https://github.com/maxiaodong97/CarND-Traffic-Sign-Classifier-Project/blob/master/images/SampleSummary.png "Sample Summary")
+
+Then we draw the histogram of samples
+```python
+histogram(y_raw, 'class', 'count', 'Number of Samples per Class')
+```
+![alt text](https://github.com/maxiaodong97/CarND-Traffic-Sign-Classifier-Project/blob/master/images/SampleSumaryHistogram.png "Sample Distribution")
+
+
+### Design and Test a Model Architecture
 
 ####1. Describe how you preprocessed the image data. What techniques were chosen and why did you choose these techniques? Consider including images showing the output of each preprocessing technique. Pre-processing refers to techniques such as converting to grayscale, normalization, etc. (OPTIONAL: As described in the "Stand Out Suggestions" part of the rubric, if you generated additional data for training, describe why you decided to generate additional data, how you generated the data, and provide example images of the additional data. Then describe the characteristics of the augmented training set like number of images in the set, number of images for each class, etc.)
 
