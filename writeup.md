@@ -620,7 +620,7 @@ Model saved
 ```
 Adagrad is slower than Adam in our case.
 
-![alt text](https://github.com/maxiaodong97/CarND-Traffic-Sign-Classifier-Project/blob/master/images/adagrad.png "adagrad"
+![alt_text](https://github.com/maxiaodong97/CarND-Traffic-Sign-Classifier-Project/blob/master/images/adagrad.png "adagrad")
 
 
 #### Fifth Try: Baseline + Augument images (~5000) in training set.  
@@ -631,6 +631,7 @@ weakLabels = [label for label in classes if y_raw.count(label) < 500]
 ```
 
 I use another python package called "from imgaug import augmenters as iaa" to do the job.
+![alt_text](https://github.com/aleju/imgaug, "imgaug"), I didn't use flip as it is not normal to have a fliped sign.
 
 ```python
 def sometimes(aug):
