@@ -37,6 +37,7 @@ data/
 ```
 
 ### Dependency
+```python
 import os
 import pandas as pd
 import skimage.data
@@ -49,7 +50,7 @@ from sklearn.utils import shuffle
 import tensorflow as tf
 import imgaug as ia
 from imgaug import augmenters as iaa
-
+```
 
 ### How to Run
 
