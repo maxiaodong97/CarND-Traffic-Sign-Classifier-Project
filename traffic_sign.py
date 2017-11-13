@@ -436,3 +436,37 @@ with tf.Session() as sess:
     print(my_top_k)
 
 print(y_new)
+
+
+def outputFeatureMap(image_input, tf_activation, activation_min=-1, activation_max=-1, plt_num=1):
+    # Here make sure to preprocess your image_input in a way your network expects
+    # with size, normalization, ect if needed
+    # image_input =
+    # Note: x should be the same name as your network's tensorflow data placeholder variable
+    # If you get an error tf_activation is not defined it may be having trouble accessing the variable
+    # from inside a function
+    activation = tf_activation.eval(session=sess, feed_dict={x: image_input})
+    featuremaps = activation.shape[3]
+    plt.figure(plt_num, figsize=(15, 15))
+    for featuremap in range(featuremaps):
+        # sets the number of feature maps to show on each row and column
+        plt.subplot(6, 8, featuremap + 1)
+        plt.title('FeatureMap ' + str(featuremap))  # displays the feature map number
+        if activation_min != -1 & activation_max != -1:
+            plt.imshow(activation[0, :, :, featuremap], interpolation="nearest",
+                       vmin=activation_min, vmax=activation_max, cmap="gray")
+        elif activation_max != -1:
+            plt.imshow(activation[0, :, :, featuremap],
+                       interpolation="nearest", vmax=activation_max, cmap="gray")
+        elif activation_min != -1:
+            plt.imshow(activation[0, :, :, featuremap],
+                       interpolation="nearest", vmin=activation_min, cmap="gray")
+        else:
+            plt.imshow(activation[0, :, :, featuremap], interpolation="nearest", cmap="gray")
+
+
+with tf.Session() as sess:
+    sess.run(tf.global_variables_initializer())
+    saver = tf.train.import_meta_graph('./traffic_signs.meta')
+    saver.restore(sess, "./traffic_signs")
+    outputFeatureMap([X_new_norm[0]], conv2d(x, weights['wc1'], biases['bc1']))
