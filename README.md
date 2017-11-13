@@ -9,10 +9,10 @@ This project will train and validate a model so it can classify traffic sign ima
 Here is the list of file for submission:
 
 1. [Jupiter notebook](https://github.com/maxiaodong97/CarND-Traffic-Sign-Classifier-Project/blob/master/Traffic_Sign_Classifier.ipynb)
-2. [HTML format of Jupiter notebook] (https://github.com/maxiaodong97/CarND-Traffic-Sign-Classifier-Project/blob/master/Traffic_Sign_Classifier.html)
+2. [HTML format of Jupiter notebook](https://github.com/maxiaodong97/CarND-Traffic-Sign-Classifier-Project/blob/master/Traffic_Sign_Classifier.html)
 3. [Python code](https://github.com/maxiaodong97/CarND-Traffic-Sign-Classifier-Project/blob/master/traffic_sign.py)
-4. [Writeup] (https://github.com/maxiaodong97/CarND-Traffic-Sign-Classifier-Project/blob/master/writeup.md)
-5. [5 Images download from web] (https://github.com/maxiaodong97/CarND-Traffic-Sign-Classifier-Project/tree/master/New_Test)
+4. [Writeup](https://github.com/maxiaodong97/CarND-Traffic-Sign-Classifier-Project/blob/master/writeup.md)
+5. [5 Images download from web](https://github.com/maxiaodong97/CarND-Traffic-Sign-Classifier-Project/tree/master/New_Test)
 
 ### Dependencies
 This lab requires:
@@ -23,10 +23,10 @@ The lab environment can be created with CarND Term1 Starter Kit. Click [here](ht
 
 ### Dataset and Repository
 
-1. Download the data set from 
-[Training data set](http://benchmark.ini.rub.de/Dataset/GTSRB_Final_Training_Images.zip)
-[Test data set] (http://benchmark.ini.rub.de/Dataset/GTSRB_Final_Test_Images.zip)
-[Test result] (http://benchmark.ini.rub.de/Dataset/GTSRB_Final_Test_GT.zip)
+Download the data set from 
+1. [Training data set](http://benchmark.ini.rub.de/Dataset/GTSRB_Final_Training_Images.zip)
+2. [Test data set](http://benchmark.ini.rub.de/Dataset/GTSRB_Final_Test_Images.zip)
+3. [Test result](http://benchmark.ini.rub.de/Dataset/GTSRB_Final_Test_GT.zip)
 
 Unzip to data folder 
 ```sh
