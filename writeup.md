@@ -761,6 +761,7 @@ Here is the result:
 
 ![alt_text](https://github.com/maxiaodong97/CarND-Traffic-Sign-Classifier-Project/blob/master/images/perClassAccuracyAugumented.png)
 
+As we can see, validation accuracy is high for every class, not just the mean.
 
 #### My final model consisted of the following layers:
 
